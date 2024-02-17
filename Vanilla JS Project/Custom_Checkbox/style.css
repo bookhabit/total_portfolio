@@ -1,0 +1,91 @@
+body{
+    margin: 0;
+    padding: 0;
+    background: #130f40;
+    font-family: arial;
+    user-select: none;
+}
+
+.container{
+    /* element를 가운데로 지정 */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    /* 요소 크기와 색깔 */
+    height: 200px;
+    width: 260px;
+    background: #ecf0f1;
+    border-radius: 20px;
+}
+
+.container .header{
+    position:absolute;
+    padding: 15px 30px;
+    color: #2691d9;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.container .group{
+    /* 2개 값을 지정할 때는 첫번째(위아래) 두번째(왼쪽,오른쪽) */
+    padding: 45px 30px;
+}
+
+.group .item{
+    margin: 25px 0;
+    font-weight: 600;
+}
+
+.container .box-group{
+    position: absolute;
+    top: 65px;
+    left: 200px;
+}
+
+.box-group .box2{
+    margin-top: 18px;
+}
+
+.container input[type="checkbox"]{
+    position: relative;
+    height: 18px;
+    width: 36px;
+    background: white;
+    outline: none;
+    cursor: pointer;
+    border-radius: 20px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,.2);
+    -webkit-appearance: none;
+}
+
+/* ::before 는 가상요소(Pseudo-Element)
+요소의 시작부분에 콘텐츠 추가
+CSS 선택자(selector)에 추가되며, html에 존재하지 않는 요소를 존재하는 것처럼 부여하여 문서의 특정 부분 선택이 가능하다 */
+/* 반드시 content 속성과 함께 써줘야 한다
+content 속성은 거짓 속성으로서, html 문서에 정보로 포함되지 않은 요소를 css에서 새롭게 생성하기 때문)
+작은따음표('') 안에는 텍스트 내용을 넣기 (없으면 작은따옴표만 넣기) */
+input[type="checkbox"]:before{
+    content: '';
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    border-radius: 20px;
+    top: 0;
+    left: 0;
+    transform: scale(.85);
+    transition: .5s;
+    /* input요소에 클릭 시 이동되는 원형 UI */
+    background: linear-gradient(#fff,#f2f2f2,#e6e6e6,#d9d9d9);
+    box-shadow: 0 2px 5px rgba(0,0,0,.2);
+}
+
+/* 체크박스 선택 시 스타일링 */
+/* :checked 가상클래스 */
+input:checked[type="checkbox"]{
+    background: #387cfa;
+}
+
+input:checked[type="checkbox"]:before{
+    left:18px;
+}
