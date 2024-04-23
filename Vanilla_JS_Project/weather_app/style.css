@@ -1,8 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
-
-
 *{
-    margin:0;
+    margin: 0;
     padding: 0;
     border: 0;
     outline: none;
@@ -25,7 +22,7 @@ body{
     padding: 28px 32px;
     overflow: hidden;
     border-radius: 18px;
-    font-family: 'Roboto',sans-serif;
+    font-family: 'Roboto', sans-serif;
     transition: 0.6s ease-out;
 }
 
@@ -93,6 +90,12 @@ body{
     margin-left: -16px;
 }
 
+.weather-box .temperature span{
+    position: absolute;
+    margin-left: 4px;
+    font-size: 1.5rem;
+}
+
 .weather-box .description{
     color: #06283D;
     font-size: 22px;
@@ -125,7 +128,7 @@ body{
 }
 
 .weather-details i{
-    columns: #06283D;
+    color: #06283D;
     font-size: 26px;
     margin-right: 10px;
     margin-top: 6px;
@@ -168,13 +171,13 @@ body{
     opacity: 0;
 }
 
-.fade-in{
+.fadeIn{
     animation: 0.5s fadeIn forwards;
     animation-delay: 0.5s;
 }
 
 @keyframes fadeIn{
-    to{
+    to {
         scale: 1;
         opacity: 1;
     }
