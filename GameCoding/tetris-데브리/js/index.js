@@ -15,7 +15,7 @@ let tempMovingItem;
 
 // 블록의 타입
 const movingItem = {
-    type : "tree",
+    type : "",
     direction:0,
     top:0,
     left:3,
@@ -29,7 +29,7 @@ function init(){
     for(let i=0; i<GAME_ROWS; i++){
         prependNewLine()
     }
-    renderBlocks()
+    generateNewBlock()
 }
 
 // 10개의 픽셀을 가진 1줄을 20개 출력
@@ -46,6 +46,7 @@ function prependNewLine(){
 
 function renderBlocks(moveType=""){
     const {type,direction,top,left} = tempMovingItem
+    console.log('렌더링',type)
     // 이전 블록의 좌표 삭제
     const movingBlocks = document.querySelectorAll(".moving")
     movingBlocks.forEach(moving=>{
@@ -55,7 +56,6 @@ function renderBlocks(moveType=""){
     BLOCKS[type][direction].some(block=>{
         const x = block[0] + left // ul태그 1줄당 li의 값
         const y = block[1] + top // li의 row값
-        console.log(playground.childNodes[y])
 
         // 화면 벗어나지 않도록 에러 조건 처리
         // 이 값은 픽셀 1개
@@ -68,7 +68,7 @@ function renderBlocks(moveType=""){
             // 블록의 초기 값 원상복귀
             tempMovingItem = {...movingItem}
             setTimeout(()=>{
-                renderBlocks()
+                renderBlocks("retry")
                 if(moveType === "top"){
                     seizeBlock()
                 }
@@ -92,11 +92,38 @@ function seizeBlock(){
         moving.classList.remove("moving")
         moving.classList.add("seized")
     })
+    checkMatch()
+}
+
+function checkMatch(){
+    const childNodes = playground.childNodes;
+    childNodes.forEach(child=>{
+        let matched = true;
+        child.children[0].childNodes.forEach(li=>{
+            if(!li.classList.contains("seized")){
+                // ul 1줄에 1칸이라도 없으면
+                matched = false; 
+            }
+        })
+        if(matched){
+            child.remove();
+        }
+    })
+
     generateNewBlock()
 }
 
 function generateNewBlock(){
-    movingItem.type = ""
+
+    // clearInterval(downInterval)
+    // downInterval = setInterval(() => {
+    //     moveBlock('top',1) // 아래로 1씩
+    // }, duration);
+
+    const blockArray = Object.entries(BLOCKS)
+    const randomIndex = Math.floor(Math.random()*blockArray.length)
+
+    movingItem.type = blockArray[randomIndex][0]
     movingItem.top = 0;
     movingItem.left = 3;
     movingItem.direction = 0;
@@ -125,8 +152,15 @@ function changeDirection(){
     renderBlocks()
 }
 
+function dropBlock(){
+    clearInterval(downInterval)
+    downInterval = setInterval(() => {
+        moveBlock("top",1)
+    }, 10);
+}
+
 // Event handling
-// keydown event는 ArrowLeft (37) , ArrowRight(39) , ArrowDown(40) , ArrowUp(38) 4가지의 key가 있다. 
+// keydown event는 ArrowLeft (37) , ArrowRight(39) , ArrowDown(40) , ArrowUp(38), spaceBar(32)
 document.addEventListener("keydown",e=>{
     switch(e.keyCode){
         case 39:
@@ -140,6 +174,9 @@ document.addEventListener("keydown",e=>{
             break;
         case 38 : 
             changeDirection();
+            break;
+        case 32 : 
+            dropBlock();
             break;
         default : 
             break
