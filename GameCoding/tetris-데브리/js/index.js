@@ -1,3 +1,5 @@
+import BLOCKS from "./blocks.js";
+
 // DOM
 const playground = document.querySelector(".playground > ul")
 
@@ -10,17 +12,6 @@ let score = 0;
 let duration = 500; // 떨어지는 시간
 let downInterval;
 let tempMovingItem;
-
-const BLOCKS = {
-    // 사용자 방향키에 따라 모양 변경
-    // x와 y의 좌표값을 가진다
-    tree:[
-        [[2,1],[0,1],[1,0],[1,1]],
-        [],
-        [],
-        []
-    ]
-}
 
 // 블록의 타입
 const movingItem = {
@@ -53,7 +44,7 @@ function prependNewLine(){
     playground.prepend(li)
 }
 
-function renderBlocks(){
+function renderBlocks(moveType=""){
     const {type,direction,top,left} = tempMovingItem
     // 이전 블록의 좌표 삭제
     const movingBlocks = document.querySelectorAll(".moving")
@@ -61,27 +52,29 @@ function renderBlocks(){
         moving.classList.remove(type,"moving")
     })
     // 블록 좌표 생성 (클래스 추가해서 화면에 보여짐)
-    BLOCKS[type][direction].forEach(block=>{
+    BLOCKS[type][direction].some(block=>{
         const x = block[0] + left // ul태그 1줄당 li의 값
         const y = block[1] + top // li의 row값
+        console.log(playground.childNodes[y])
 
         // 화면 벗어나지 않도록 에러 조건 처리
         // 이 값은 픽셀 1개
         
         const target = playground.childNodes[y] ? playground.childNodes[y].childNodes[0].childNodes[x] : null; 
-        console.log('target값',target)
         const isAvailable = checkEmpty(target)
         if(isAvailable){
-            console.log('true문')
             target.classList.add(type,"moving")
         }else{
-            console.log('범위 벗어남')
             // 블록의 초기 값 원상복귀
             tempMovingItem = {...movingItem}
-            // setTimeout(()=>{
-            //     renderBlocks()
-            // },0)
-            renderBlocks()
+            setTimeout(()=>{
+                renderBlocks()
+                if(moveType === "top"){
+                    seizeBlock()
+                }
+            },0)
+            // renderBlocks()
+            return true
         }
     })
     movingItem.left = left;
@@ -89,9 +82,31 @@ function renderBlocks(){
     movingItem.direction = direction
 }
 
+// 블록이 화면 제일 아래에 닿으면 처리하는 함수
+// 새로운 블록 생성
+// 화면 아래의 블록들 저장
+function seizeBlock(){
+    console.log('seize block')
+    const movingBlocks = document.querySelectorAll(".moving")
+    movingBlocks.forEach(moving=>{
+        moving.classList.remove("moving")
+        moving.classList.add("seized")
+    })
+    generateNewBlock()
+}
+
+function generateNewBlock(){
+    movingItem.type = ""
+    movingItem.top = 0;
+    movingItem.left = 3;
+    movingItem.direction = 0;
+    tempMovingItem = {...movingItem}
+    renderBlocks()
+}
+
 // 화면에 벗어나지 않도록 확인
 function checkEmpty(target){
-    if(!target){
+    if(!target || target.classList.contains("seized")){
         return false
     }
     return true
@@ -101,6 +116,12 @@ function checkEmpty(target){
 // left와 top값을 변경시켜서 좌표를 변경시켜준다.
 function moveBlock(moveType,amount){
     tempMovingItem[moveType] += amount;
+    renderBlocks(moveType)
+}
+
+function changeDirection(){
+    const direction = tempMovingItem.direction;
+    direction === 3 ? tempMovingItem.direction = 0 : tempMovingItem.direction += 1;
     renderBlocks()
 }
 
@@ -116,6 +137,10 @@ document.addEventListener("keydown",e=>{
             break
         case 40:
             moveBlock("top",1)
+            break;
+        case 38 : 
+            changeDirection();
+            break;
         default : 
             break
     }
