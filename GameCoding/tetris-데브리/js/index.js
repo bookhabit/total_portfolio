@@ -2,6 +2,10 @@ import BLOCKS from "./blocks.js";
 
 // DOM
 const playground = document.querySelector(".playground > ul")
+const gameText = document.querySelector('.game-text')
+const scoreDisplay = document.querySelector('.score')
+const restartButton = document.querySelector('.game-text > button')
+
 
 // Setting
 const GAME_ROWS = 20;
@@ -67,6 +71,10 @@ function renderBlocks(moveType=""){
         }else{
             // 블록의 초기 값 원상복귀
             tempMovingItem = {...movingItem}
+            if(moveType === "retry"){
+                clearInterval(downInterval)
+                showGameoverText()
+            }
             setTimeout(()=>{
                 renderBlocks("retry")
                 if(moveType === "top"){
@@ -107,6 +115,9 @@ function checkMatch(){
         })
         if(matched){
             child.remove();
+            prependNewLine()
+            score++
+            scoreDisplay.innerText = score;
         }
     })
 
@@ -115,10 +126,11 @@ function checkMatch(){
 
 function generateNewBlock(){
 
-    // clearInterval(downInterval)
-    // downInterval = setInterval(() => {
-    //     moveBlock('top',1) // 아래로 1씩
-    // }, duration);
+    // 아래로 1줄씩 떨어뜨리기
+    clearInterval(downInterval)
+    downInterval = setInterval(() => {
+        moveBlock('top',1) 
+    }, duration);
 
     const blockArray = Object.entries(BLOCKS)
     const randomIndex = Math.floor(Math.random()*blockArray.length)
@@ -159,6 +171,10 @@ function dropBlock(){
     }, 10);
 }
 
+function showGameoverText(){
+    gameText.style.display = 'flex'
+}
+
 // Event handling
 // keydown event는 ArrowLeft (37) , ArrowRight(39) , ArrowDown(40) , ArrowUp(38), spaceBar(32)
 document.addEventListener("keydown",e=>{
@@ -181,4 +197,10 @@ document.addEventListener("keydown",e=>{
         default : 
             break
     }
+})
+
+restartButton.addEventListener("click",()=>{
+    playground.innerHTML = "";
+    gameText.style.display = 'none'
+    init()
 })
